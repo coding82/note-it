@@ -88,4 +88,3 @@ router.put('/:id/editone', (req, res, next) => {
     .then(([_, updated]) => res.status(201).json(updated[0]))
     .catch(next)
 })
-
