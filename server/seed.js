@@ -1,4 +1,6 @@
 'use strict'
+// seeding heroku database command: heroku run npm run seed
+
 
 const db = require('./db')
 const {User} = require('./db/models')
