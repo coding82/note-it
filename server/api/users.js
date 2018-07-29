@@ -3,18 +3,24 @@ const {User} = require('../db/models')
 const Sequelize = require('sequelize')
 module.exports = router
 
-router.get('/', async (req, res, next) => {
-  try {
-    const users = await User.findAll({
-      attributes: ['id', 'email', 'posts']
-    })
-    res.json(users)
-  } catch (err) {
-    next(err)
-  }
+
+// GET - all users
+
+router.get('/', (req, res, next) => {
+  return User.findAll()
+    .then( users => res.json(users).status(200))
+    .catch(next)
 })
 
-// new user
+// GET - single user
+
+router.get('/:id',(req, res, next) => {
+  return User.findById(req.params.id)
+    .then( user => res.json(user).status(200))
+    .catch(next)
+})
+
+// POST - new user
 
 router.post('/', (req, res, next) => {
   return User.create(req.body)
@@ -22,36 +28,57 @@ router.post('/', (req, res, next) => {
     .catch(next)
 })
 
-// new post
+// PUT - add a post to the user
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id/posts', (req, res, next) => {
+  // req.body.content
   return User.update({'posts': Sequelize.fn('array_append', Sequelize.col('posts'), req.body.content)}, { where: {id: req.params.id}, returning: true})
     .then(([_, updated]) => res.status(201).json(updated[0]))
     .catch(next)
 })
 
-// get all posts for a signin user
+////// DELETE ONE //////
+//PUT - delete single post
 
-router.get('/:id',(req, res, next) => {
+router.put('/:id/posts/movetotrash', (req, res, next) => {
+  // put input - req.body.id
   return User.findById(req.params.id)
-    .then( user => res.json(user))
+    .then( user => {
+      let outItem = user.posts.splice( +req.body.id, 1)
+      let leftItems = user.posts;
+              User.update(
+                {'trash': Sequelize.fn('array_append', Sequelize.col('trash'), outItem[0])},
+                {where: {id: req.params.id},
+                returning: true})
+       return User.update(
+                {'posts': leftItems},
+                {where: {id: req.params.id},
+                returning: true})
+        .then(([_, updated]) => res.status(201).json(updated[0]))
+    })
     .catch(next)
 })
 
-// delete all post
 
-router.get('/:id/nopost', (req, res, next) => {
+////// DELETE ALL //////
+// PUT - Empty the posts array
+
+router.put('/:id/emptyposts', (req, res, next) => {
   return User.update({'posts': [] }, {where: {id: req.params.id}, returning: true})
     .then(([_, updated]) => res.status(201).json(updated[0]))
     .catch(next)
 })
 
-// delete single post
+////// DELETE ALL //////
+// PUT - Empty the trash array
 
-// router.delete('/:id/post/:postId', (req, res, next) => {
+router.put('/:id/emptytrash', (req, res, next) => {
+  return User.update({'trash': [] }, {where: {id: req.params.id}, returning: true})
+    .then(([_, updated]) => res.status(201).json(updated[0]))
+    .catch(next)
+})
 
-// })
-
+// PUT - Edit single post
 
 // edit single post
 

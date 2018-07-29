@@ -23,6 +23,10 @@ const User = db.define('user', {
   posts : {
     type: Sequelize.ARRAY(Sequelize.STRING),
     defaultValue: []
+  },
+  trash: {
+    type: Sequelize.ARRAY(Sequelize.STRING),
+    defaultValue: []
   }
 })
 
