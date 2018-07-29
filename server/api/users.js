@@ -30,7 +30,7 @@ router.post('/', (req, res, next) => {
 
 // PUT - add a post to the user
 
-router.put('/:id/posts', (req, res, next) => {
+router.put('/:id/newpost', (req, res, next) => {
   // req.body.content
   return User.update({'posts': Sequelize.fn('array_append', Sequelize.col('posts'), req.body.content)}, { where: {id: req.params.id}, returning: true})
     .then(([_, updated]) => res.status(201).json(updated[0]))
@@ -40,7 +40,7 @@ router.put('/:id/posts', (req, res, next) => {
 ////// DELETE ONE //////
 //PUT - delete single post
 
-router.put('/:id/posts/movetotrash', (req, res, next) => {
+router.put('/:id/onetotrash', (req, res, next) => {
   // put input - req.body.id
   return User.findById(req.params.id)
     .then( user => {
@@ -78,12 +78,14 @@ router.put('/:id/emptytrash', (req, res, next) => {
     .catch(next)
 })
 
-// PUT - Edit single post
+router.put('/:id/editone', (req, res, next) => {
+  let {id, content} = req.body
+  return User.findById(req.params.id)
+    .then( user => {
+      user.posts.splice(id, 1, content);
+      return User.update({'posts': user.posts}, {where: {id: req.params.id}, returning: true })
+    })
+    .then(([_, updated]) => res.status(201).json(updated[0]))
+    .catch(next)
+})
 
-// edit single post
-
-// router.put('/:id/posts/:postId', (req, res, next) => {
-//   return User.update(req.body, { where: {id: req.params.id}, returning: true})
-//   .then(([_, updated]) => res.status(201).json(updated[0]))
-//   .catch(next)
-// })
