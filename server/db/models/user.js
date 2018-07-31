@@ -27,6 +27,10 @@ const User = db.define('user', {
   trash: {
     type: Sequelize.ARRAY(Sequelize.STRING),
     defaultValue: []
+  },
+  isAdmin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 })
 

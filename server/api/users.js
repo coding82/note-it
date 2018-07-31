@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {User} = require('../db/models')
 const Sequelize = require('sequelize')
 module.exports = router
-
+const { isLoggedIn, isAdmin } = require('./utility')
 
 // GET - all users
 
@@ -14,7 +14,7 @@ router.get('/', (req, res, next) => {
 
 // GET - single user
 
-router.get('/:id',(req, res, next) => {
+router.get('/:id', (req, res, next) => {
   return User.findById(req.params.id)
     .then( user => res.json(user).status(200))
     .catch(next)

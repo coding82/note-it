@@ -7,6 +7,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store)
 const db = require('./db')
 const sessionStore = new SequelizeStore({db})
 const PORT = process.env.PORT || 8080
+var cors = require('cors')
 const app = express()
 module.exports = app
 
@@ -29,6 +30,7 @@ if (process.env.NODE_ENV !== 'production') require('../secrets')
 const createApp = () => {
   // logging middleware
   app.use(morgan('dev'))
+  app.use(cors())
 
   // body parsing middleware
   app.use(express.json())
