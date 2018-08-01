@@ -82,7 +82,8 @@ router.put('/:id/restoreone', (req, res, next) => {
 router.put('/:id/restoreall', (req, res, next) => {
   return User.findById(req.params.id)
     .then( user => {
-              User.update({'posts': [...user.posts, user.trash]}, {where: {id: req.params.id}, returning: true})
+      const newposts = user.posts.concat(user.trash);
+              User.update({'posts': newposts}, {where: {id: req.params.id}, returning: true})
       return User.update({'trash': []}, {where: {id: req.params.id}, returning: true})
     })
     .then(([_, updated]) => res.status(201).json(updated[0]))
