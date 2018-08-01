@@ -59,6 +59,20 @@ router.put('/:id/onetotrash', (req, res, next) => {
     .catch(next)
 })
 
+/////// RESTORE ALL ///////
+
+router.put('/:id/restoreall', (req, res, next) => {
+
+})
+
+
+/////// RESTORE ONE ///////
+
+router.put('/:id/restoreone', (req, res, next) => {
+
+})
+
+
 
 ////// DELETE ALL //////
 // PUT - Empty the posts array
