@@ -45,13 +45,31 @@ router.put('/:id/onetotrash', (req, res, next) => {
   return User.findById(req.params.id)
     .then( user => {
       let outItem = user.posts.splice( +req.body.id, 1)
-      let leftItems = user.posts;
               User.update(
                 {'trash': Sequelize.fn('array_append', Sequelize.col('trash'), outItem[0])},
                 {where: {id: req.params.id},
                 returning: true})
        return User.update(
-                {'posts': leftItems},
+                {'posts': user.posts},
+                {where: {id: req.params.id},
+                returning: true})
+        .then(([_, updated]) => res.status(201).json(updated[0]))
+    })
+    .catch(next)
+})
+
+/////// RESTORE ONE ///////
+
+router.put('/:id/restoreone', (req, res, next) => {
+  return User.findById(req.params.id)
+    .then( user => {
+      let outItem = user.trash.splice(+req.body.id, 1)
+              User.update(
+                {'posts': Sequelize.fn('array_append', Sequelize.col('posts'), outItem[0])},
+                {where: {id: req.params.id},
+                returning: true})
+       return User.update(
+                {'trash': user.trash},
                 {where: {id: req.params.id},
                 returning: true})
         .then(([_, updated]) => res.status(201).json(updated[0]))
@@ -62,14 +80,12 @@ router.put('/:id/onetotrash', (req, res, next) => {
 /////// RESTORE ALL ///////
 
 router.put('/:id/restoreall', (req, res, next) => {
-
-})
-
-
-/////// RESTORE ONE ///////
-
-router.put('/:id/restoreone', (req, res, next) => {
-
+  return User.findById(req.params.id)
+    .then( user => {
+              User.update({'posts': user.trash}, {where: {id: req.params.id}, returning: true})
+      return User.update({'trash': []}, {where: {id: req.params.id}, returning: true})
+    })
+    .then(([_, updated]) => res.status(201).json(updated[0]))
 })
 
 
