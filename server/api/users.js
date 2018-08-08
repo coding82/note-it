@@ -66,7 +66,7 @@ router.put('/:id/onetotrash', (req, res, next) => {
 router.put('/:id/deleteoneforever', (req, res, next) => {
   // put input - req.body.id
   const id = +Object.keys(req.body)
-
+  console.log(req.body)
   return User.findById(req.params.id)
     .then( user => {
       user.trash.splice( +id, 1)
