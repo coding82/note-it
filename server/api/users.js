@@ -69,9 +69,9 @@ router.put('/:id/deleteoneforever', (req, res, next) => {
 
   return User.findById(req.params.id)
     .then( user => {
-      user.posts.splice( +id, 1)
+      user.trash.splice( +id, 1)
        return User.update(
-                {'trash': user.posts},
+                {'trash': user.trash},
                 {where: {id: req.params.id},
                 returning: true})
         .then(([_, updated]) => res.status(201).json(updated[0]))
